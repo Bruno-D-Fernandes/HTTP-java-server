@@ -1,31 +1,24 @@
-import com.sun.net.httpserver.HttpContext;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.*;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.InetSocketAddress;
-import java.util.Scanner;
-import java.util.concurrent.Executor;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
 
 public class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException {
+        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
 
-        HttpServer server = null;
+        server.createContext("/", exchange -> {
+            String resposta = "Funcionando!";
+            exchange.sendResponseHeaders(200, resposta.length());
+            exchange.getResponseBody().write(resposta.getBytes());
 
-        try {
-            server = HttpServer.create(new InetSocketAddress(8080), 0);
-        } catch (IOException e) {
-            throw new RuntimeException("Create servidor: " + e);
-        }
+            exchange.close();
+        });
 
         server.setExecutor(null);
-
-
-
         server.start();
-
-        System.out.println(new InetSocketAddress(8080));
-        System.out.println("Servidor rodando em http://localhost:8080");
 
     }
 }
